@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KaziHub - Sign In / Sign Up</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#f59e0b',
+                        accent: '#10b981'
+                    },
+                    animation: {
+                        'slide-in': 'slideIn 0.5s ease-out',
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'shake': 'shake 0.5s ease-in-out'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .form-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .input-group {
+            position: relative;
+        }
+        .floating-label {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            background: white;
+            padding: 0 4px;
+        }
+        .input-field:focus + .floating-label,
+        .input-field:not(:placeholder-shown) + .floating-label {
+            top: 0;
+            font-size: 0.75rem;
+            color: #2563eb;
+        }
+        .social-btn {
+            transition: all 0.3s ease;
+        }
+        .social-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="form-container">
+    <!-- Header -->
+    <header class="absolute top-0 left-0 right-0 z-50 p-6">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
+                    <i class="fas fa-briefcase text-primary text-xl"></i>
+                </div>
+                <span class="text-2xl font-bold text-white">KaziHub</span>
+            </div>
+            <a href="index.html" class="text-white hover:text-gray-200 transition">
+                <i class="fas fa-home mr-2"></i>Back to Home
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="min-h-screen flex items-center justify-center p-4 pt-20">
+        <div class="w-full max-w-md">
+            <!-- Form Toggle Buttons -->
+            <div class="flex mb-8 glass-effect rounded-lg p-1">
+                <button id="login-tab" class="flex-1 py-3 px-4 rounded-md text-sm font-medium transition-all duration-300 bg-primary text-white">
+                    Sign In
+                </button>
+                <button id="signup-tab" class="flex-1 py-3 px-4 rounded-md text-sm font-medium transition-all duration-300 text-gray-600 hover:text-gray-800">
+                    Sign Up
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <div id="login-form" class="glass-effect rounded-2xl shadow-2xl p-8 animate-fade-in">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome Back!</h2>
+                    <p class="text-gray-600">Sign in to continue your journey</p>
+                </div>
+
+                <!-- Social Login Buttons -->
+                <div class="space-y-3 mb-6">
+                    <button class="social-btn w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="w-5 h-5 mr-3">
+                        <span class="text-gray-700 font-medium">Continue with Google</span>
+                    </button>
+                    <button class="social-btn w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        <i class="fab fa-facebook-f mr-3"></i>
+                        <span class="font-medium">Continue with Facebook</span>
+                    </button>
+                    <button class="social-btn w-full flex items-center justify-center px-4 py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition">
+                        <i class="fab fa-apple mr-3"></i>
+                        <span class="font-medium">Continue with Apple</span>
+                    </button>
+                </div>
+
+                <!-- Divider -->
+                <div class="relative mb-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or continue with email</span>
+                    </div>
+                </div>
+
+                <!-- Login Form Fields -->
+                <form id="login-form-fields" class="space-y-6">
+                    <div class="input-group">
+                        <input 
+                            type="email" 
+                            id="login-email" 
+                            class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition placeholder-transparent"
+                            placeholder="Email address"
+                            required
+                        >
+                        <label for="login-email" class="floating-label">Email address</label>
+                        <div class="error-message hidden text-red-500 text-sm mt-1"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <input 
+                            type="password" 
+                            id="login-password" 
+                            class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition placeholder-transparent"
+                            placeholder="Password"
+                            required
+                        >
+                        <label for="login-password" class="floating-label">Password</label>
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600" onclick="togglePassword('login-password')">
+                            <i class="fas fa-eye" id="login-password-icon"></i>
+                        </button>
+                        <div class="error-message hidden text-red-500 text-sm mt-1"></div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="rounded border-gray-300 text-primary focus:ring-primary">
+                            <span class="ml-2 text-sm text-gray-600">Remember me</span>
+                        </label>
+                        <a href="#" class="text-sm text-primary hover:text-blue-700 transition">Forgot password?</a>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition duration-200 flex items-center justify-center"
+                    >
+                        <span class="button-text">Sign In</span>
+                        <i class="fas fa-spinner fa-spin ml-2 hidden loading-spinner"></i>
+                    </button>
+                </form>
+
+                <!-- Two-Factor Authentication -->
+                <div id="two-factor-section" class="hidden mt-6 p-4 bg-blue-50 rounded-lg">
+                    <h3 class="font-semibold text-gray-800 mb-3">Two-Factor Authentication</h3>
+                    <p class="text-sm text-gray-600 mb-4">Enter the 6-digit code from your authenticator app</p>
+                    <div class="flex space-x-2 mb-4">
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                        <input type="text" maxlength="1" class="w-12 h-12 text-center border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" />
+                    </div>
+                    <button class="w-full bg-accent text-white py-2 px-4 rounded-lg font-medium hover:bg-green-600 transition">
+                        Verify Code
+                    </button>
+                </div>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signup-form" class="glass-effect rounded-2xl shadow-2xl p-8 hidden">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Join KaziHub</h2>
+                    <p class="text-gray-600">Create your account and start earning</p>
+                </div>
+
+                <!-- User Type Selection -->
+                <div class="mb-6">
+                    <p class="text-sm font-medium text-gray-700 mb-3">I want to:</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="user-type" value="worker" class="text-primary focus:ring-primary" checked>
+                            <div class="ml-3">
+                                <div class="font-medium text-gray-800">Find Work</div>
+                                <div class="text-xs text-gray-500">As a freelancer/worker</div>
+                            </div>
+                        </label>
+                        <label class="flex items-center p-3 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                            <input type="radio" name="user-type" value="employer" class="text-primary focus:ring-primary">
+                            <div class="ml-3">
+                                <div class="font-medium text-gray-800">Hire Talent</div>
+                                <div class="text-xs text-gray-500">As an employer</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Social Signup Buttons -->
+                <div class="space-y-3 mb-6">
+                    <button class="social-btn w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+                        <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="w-5 h-5 mr-3">
+                        <span class="text-gray-700 font-medium">Sign up with Google</span>
+                    </button>
+                    <button class="social-btn w-full flex items-center justify-center px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                        <i class="fab fa-facebook-f mr-3"></i>
+                        <span class="font-medium">Sign up with Facebook</span>
+                    </button>
+                </div>
+
+                <!-- Divider -->
+                <div class="relative mb-6">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Or sign up with email</span>
+                    </div>
+                </div>
+
+                <!-- Signup Form Fields -->
+                <form id="signup-form-fields" class="space-y-6">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                id="first-name" 
+                                class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition placeholder-transparent"
+                                placeholder="First name"
+                                required
+                            >
+                            <label for="first-name" class="floating-label">First name</label>
+                            <div class="error-message hidden text-red-500 text-sm mt-1"></div>
+                        </div>
+                        <div class="input-group">
+                            <input 
+                                type="text" 
+                                id="last-name" 
+                                class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition placeholder-transparent"
+                                placeholder="Last name"
+                                required
+                            >
+                            <label for="last-name" class="floating-label">Last name</label>
+                            <div class="error-message hidden text-red-500 text-sm mt-1"></div>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <input 
+                            type="email" 
+                            id="signup-email" 
+                            class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition placeholder-transparent"
+                            placeholder="Email address"
+                            required
+                        >
+                        <label for="signup-email" class="floating-label">Email address</label>
+                        <div class="error-message hidden text-red-500 text-sm mt-1"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <input 
+                            type="tel" 
+                            id="phone-number" 
+                            class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition placeholder-transparent"
+                            placeholder="Phone number"
+                            required
+                        >
+                        <label for="phone-number" class="floating-label">Phone number (+254...)</label>
+                        <div class="error-message hidden text-red-500 text-sm mt-1"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <input 
+                            type="password" 
+                            id="signup-password" 
+                            class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition placeholder-transparent"
+                            placeholder="Password"
+                            required
+                        >
+                        <label for="signup-password" class="floating-label">Password</label>
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600" onclick="togglePassword('signup-password')">
+                            <i class="fas fa-eye" id="signup-password-icon"></i>
+                        </button>
+                        <div class="error-message hidden text-red-500 text-sm mt-1"></div>
+                    </div>
+
+                    <div class="input-group">
+                        <input 
+                            type="password" 
+                            id="confirm-password" 
+                            class="input-field w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition placeholder-transparent"
+                            placeholder="Confirm password"
+                            required
+                        >
+                        <label for="confirm-password" class="floating-label">Confirm password</label>
+                        <div class="error-message hidden text-red-500 text-sm mt-1"></div>
+                    </div>
+
+                    <!-- Password Strength Indicator -->
+                    <div class="password-strength hidden">
+                        <div class="text-sm text-gray-600 mb-2">Password strength:</div>
+                        <div class="flex space-x-1">
+                            <div class="h-2 w-1/4 bg-gray-200 rounded strength-bar"></div>
+                            <div class="h-2 w-1/4 bg-gray-200 rounded strength-bar"></div>
+                            <div class="h-2 w-1/4 bg-gray-200 rounded strength-bar"></div>
+                            <div class="h-2 w-1/4 bg-gray-200 rounded strength-bar"></div>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1 strength-text">Enter a password</div>
+                    </div>
+
+                    <!-- Terms and Privacy -->
+                    <div class="flex items-start">
+                        <input type="checkbox" id="terms" class="mt-1 rounded border-gray-300 text-primary focus:ring-primary" required>
+                        <label for="terms" class="ml-2 text-sm text-gray-600">
+                            I agree to KaziHub's <a href="#" class="text-primary hover:text-blue-700">Terms of Service</a> 
+                            and <a href="#" class="text-primary hover:text-blue-700">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <div class="flex items-start">
+                        <input type="checkbox" id="marketing" class="mt-1 rounded border-gray-300 text-primary focus:ring-primary">
+                        <label for="marketing" class="ml-2 text-sm text-gray-600">
+                            I want to receive updates about new opportunities and platform features
+                        </label>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="w-full bg-primary text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition duration-200 flex items-center justify-center"
+                    >
+                        <span class="button-text">Create Account</span>
+                        <i class="fas fa-spinner fa-spin ml-2 hidden loading-spinner"></i>
+                    </button>
+                </form>
+
+                <!-- Email Verification Notice -->
+                <div id="verification-notice" class="hidden mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div class="flex items-center">
+                        <i class="fas fa-envelope-check text-green-600 mr-3"></i>
+                        <div>
+                            <h3 class="font-semibold text-green-800">Check your email!</h3>
+                            <p class="text-sm text-green-700">We've sent a verification link to your email address.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success Message -->
+            <div id="success-message" class="hidden glass-effect rounded-2xl shadow-2xl p-8 text-center">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check text-green-600 text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome to KaziHub!</h2>
+                <p class="text-gray-600 mb-6">Your account has been created successfully.</p>
+                <button class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+                    Continue to Dashboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 text-center">
+            <i class="fas fa-spinner fa-spin text-primary text-3xl mb-4"></i>
+            <p class="text-gray-700">Processing your request...</p>
+        </div>
+    </div>
+
+    <script>
+        // Form switching functionality
+        const loginTab = document.getElementById('login-tab');
+        const signupTab = document.getElementById('signup-tab');
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+
+        loginTab.addEventListener('click', () => {
+            loginTab.classList.add('bg-primary', 'text-white');
+            loginTab.classList.remove('text-gray-600');
+            signupTab.classList.remove('bg-primary', 'text-white');
+            signupTab.classList.add('text-gray-600');
+            
+            loginForm.classList.remove('hidden');
+            signupForm.classList.add('hidden');
+            loginForm.classList.add('animate-fade-in');
+        });
+
+        signupTab.addEventListener('click', () => {
+            signupTab.classList.add('bg-primary', 'text-white');
+            signupTab.classList.remove('text-gray-600');
+            loginTab.classList.remove('bg-primary', 'text-white');
+            loginTab.classList.add('text-gray-600');
+            
+            signupForm.classList.remove('hidden');
+            loginForm.classList.add('hidden');
+            signupForm.classList.add('animate-fade-in');
+        });
+
+        // Password visibility toggle
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(inputId + '-icon');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Password strength checker
+        const signupPassword = document.getElementById('signup-password');
+        const passwordStrength = document.querySelector('.password-strength');
+        const strengthBars = document.querySelectorAll('.strength-bar');
+        const strengthText = document.querySelector('.strength-text');
+
+        signupPassword.addEventListener('input', (e) => {
+            const password = e.target.value;
+            passwordStrength.classList.remove('hidden');
+            
+            let strength = 0;
+            let feedback = [];
+
+            // Check password criteria
+            if (password.length >= 8) strength++;
+            else feedback.push('at least 8 characters');
+
+            if (/[a-z]/.test(password)) strength++;
+            else feedback.push('lowercase letter');
+
+            if (/[A-Z]/.test(password)) strength++;
+            else feedback.push('uppercase letter');
+
+            if (/[0-9]/.test(password)) strength++;
+            else feedback.push('number');
+
+            if (/[^A-Za-z0-9]/.test(password)) strength++;
+            else feedback.push('special character');
+
+            // Update strength bars
+            strengthBars.forEach((bar, index) => {
+                bar.classList.remove('bg-red-500', 'bg-yellow-500', 'bg-green-500');
+                if (index < strength) {
+                    if (strength <= 2) bar.classList.add('bg-red-500');
+                    else if (strength <= 3) bar.classList.add('bg-yellow-500');
+                    else bar.classList.add('bg-green-500');
+                } else {
+                    bar.classList.add('bg-gray-200');
+                }
+            });
+
+            // Update strength text
+            if (strength <= 2) {
+                strengthText.textContent = `Weak - Add: ${feedback.slice(0, 2).join(', ')}`;
+                strengthText.className = 'text-xs text-red-500 mt-1 strength-text';
+            } else if (strength <= 3) {
+                strengthText.textContent = 'Medium - Consider adding more complexity';
+                strengthText.className = 'text-xs text-yellow-600 mt-1 strength-text';
+            } else {
+                strengthText.textContent = 'Strong password!';
+                strengthText.className = 'text-xs text-green-600 mt-1 strength-text';
+            }
+        });
+
+        // Form validation
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function validatePhone(phone) {
+            const re = /^\+254[0-9]{9}$/;
+            return re.test(phone);
+        }
+
+        function showError(inputId, message) {
+            const input = document.getElementById(inputId);
+            const errorDiv = input.parentNode.querySelector('.error-message');
+            
+            input.classList.add('border-red-500', 'animate-shake');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+            
+            setTimeout(() => {
+                input.classList.remove('animate-shake');
+            }, 500);
+        }
+
+        function clearError(inputId) {
+            const input = document.getElementById(inputId);
+            const errorDiv = input.parentNode.querySelector('.error-message');
+            
+            input.classList.remove('border-red-500');
+            errorDiv.classList.add('hidden');
+        }
+
+        // Login form submission
+        document.getElementById('login-form-fields').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const buttonText = submitBtn.querySelector('.button-text');
+            const loadingSpinner = submitBtn.querySelector('.loading-spinner');
+
+            // Clear previous errors
+            clearError('login-email');
+            clearError('login-password');
+
+            // Validate inputs
+            let hasErrors = false;
+
+            if (!validateEmail(email)) {
+                showError('login-email', 'Please enter a valid email address');
+                hasErrors = true;
+            }
+
+            if (password.length < 6) {
+                showError('login-password', 'Password must be at least 6 characters');
+                hasErrors = true;
+            }
+
+            if (hasErrors) return;
+
+            // Show loading state
+            buttonText.textContent = 'Signing In...';
+            loadingSpinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            // Simulate API call
+            try {
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Simulate 2FA requirement (randomly)
+                if (Math.random() > 0.7) {
+                    document.getElementById('two-factor-section').classList.remove('hidden');
+                    buttonText.textContent = 'Sign In';
+                    loadingSpinner.classList.add('hidden');
+                    submitBtn.disabled = false;
+                } else {
+                    // Success
+                    document.getElementById('login-form').classList.add('hidden');
+                    document.getElementById('success-message').classList.remove('hidden');
+                }
+            } catch (error) {
+                showError('login-password', 'Invalid email or password');
+                buttonText.textContent = 'Sign In';
+                loadingSpinner.classList.add('hidden');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // Signup form submission
+        document.getElementById('signup-form-fields').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('first-name').value;
+            const lastName = document.getElementById('last-name').value;
+            const email = document.getElementById('signup-email').value;
+            const phone = document.getElementById('phone-number').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            const terms = document.getElementById('terms').checked;
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const buttonText = submitBtn.querySelector('.button-text');
+            const loadingSpinner = submitBtn.querySelector('.loading-spinner');
+
+            // Clear previous errors
+            ['first-name', 'last-name', 'signup-email', 'phone-number', 'signup-password', 'confirm-password'].forEach(clearError);
+
+            // Validate inputs
+            let hasErrors = false;
+
+            if (firstName.length < 2) {
+                showError('first-name', 'First name must be at least 2 characters');
+                hasErrors = true;
+            }
+
+            if (lastName.length < 2) {
+                showError('last-name', 'Last name must be at least 2 characters');
+                hasErrors = true;
+            }
+
+            if (!validateEmail(email)) {
+                showError('signup-email', 'Please enter a valid email address');
+                hasErrors = true;
+            }
+
+            if (!validatePhone(phone)) {
+                showError('phone-number', 'Please enter a valid Kenyan phone number (+254...)');
+                hasErrors = true;
+            }
+
+            if (password.length < 8) {
+                showError('signup-password', 'Password must be at least 8 characters');
+                hasErrors = true;
+            }
+
+            if (password !== confirmPassword) {
+                showError('confirm-password', 'Passwords do not match');
+                hasErrors = true;
+            }
+
+            if (!terms) {
+                alert('Please accept the Terms of Service and Privacy Policy');
+                hasErrors = true;
+            }
+
+            if (hasErrors) return;
+
+            // Show loading state
+            buttonText.textContent = 'Creating Account...';
+            loadingSpinner.classList.remove('hidden');
+            submitBtn.disabled = true;
+
+            // Simulate API call
+            try {
+                await new Promise(resolve => setTimeout(resolve, 3000));
+                
+                // Show verification notice
+                document.getElementById('verification-notice').classList.remove('hidden');
+                buttonText.textContent = 'Account Created!';
+                loadingSpinner.classList.add('hidden');
+                
+                setTimeout(() => {
+                    document.getElementById('signup-form').classList.add('hidden');
+                    document.getElementById('success-message').classList.remove('hidden');
+                }, 2000);
+                
+            } catch (error) {
+                showError('signup-email', 'This email is already registered');
+                buttonText.textContent = 'Create Account';
+                loadingSpinner.classList.add('hidden');
+                submitBtn.disabled = false;
+            }
+        });
+
+        // 2FA code input handling
+        const twoFactorInputs = document.querySelectorAll('#two-factor-section input');
+        twoFactorInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < twoFactorInputs.length - 1) {
+                    twoFactorInputs[index + 1].focus();
+                }
+            });
+
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                    twoFactorInputs[index - 1].focus();
+                }
+            });
+        });
+
+        // Social login handlers
+        document.querySelectorAll('.social-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const provider = btn.textContent.toLowerCase();
+                
+                // Show loading overlay
+                document.getElementById('loading-overlay').classList.remove('hidden');
+                
+                // Simulate social login
+                setTimeout(() => {
+                    document.getElementById('loading-overlay').classList.add('hidden');
+                    alert(`${provider} login would be handled here`);
+                }, 2000);
+            });
+        });
+
+        // Auto-format phone number
+        document.getElementById('phone-number').addEventListener('input', (e) => {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.startsWith('0')) {
+                value = '254' + value.substring(1);
+            }
+            if (!value.startsWith('254')) {
+                value = '254' + value;
+            }
+            e.target.value = '+' + value;
+        });
+
+        // Real-time email validation
+        ['login-email', 'signup-email'].forEach(id => {
+            document.getElementById(id).addEventListener('blur', (e) => {
+                if (e.target.value && !validateEmail(e.target.value)) {
+                    showError(id, 'Please enter a valid email address');
+                } else {
+                    clearError(id);
+                }
+            });
+        });
+    </script>
+</body>
+</html>
