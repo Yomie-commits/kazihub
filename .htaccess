@@ -1,0 +1,9 @@
+Options -Indexes
+DirectoryIndex index.php
+
+# Protect hidden files
+<FilesMatch "^\.">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+</FilesMatch>
