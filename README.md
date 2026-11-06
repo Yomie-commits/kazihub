@@ -30,23 +30,40 @@ Built with **PHP 8, MySQL, HTML, CSS, JavaScript and Bootstrap 5**, plus Bootstr
 
 ---
 
-## Install on InfinityFree (or any PHP/MySQL host)
+## Why GitHub Pages shows only HTML
 
-1. **Create a database.** In the InfinityFree control panel open **MySQL Databases** and create one. Note the **host** (e.g. `sql123.infinityfree.com`), **database name**, **username** and **password**.
-2. **Upload the files.** Upload everything in this folder into `htdocs` (or into a sub-folder such as `htdocs/kazihub`) with the File Manager or FTP (FileZilla).
-3. **Edit `config/config.php`** with your database details:
-   ```php
-   define('DB_HOST', getenv('KAZI_DB_HOST') ?: 'sql123.infinityfree.com');
-   define('DB_NAME', getenv('KAZI_DB_NAME') ?: 'if0_12345678_kazihub');
-   define('DB_USER', getenv('KAZI_DB_USER') ?: 'if0_12345678');
-   define('DB_PASS', getenv('KAZI_DB_PASS') ?: 'your-vpanel-password');
-   ```
-4. **Create the tables.** Either:
-   - open `https://your-site/setup.php` and click **Create tables** (tick the box to add demo data), **or**
-   - in phpMyAdmin, import `database/schema.sql` (and optionally `database/demo_data.sql`).
-5. **Create your admin account** on the second step of `setup.php`.
-6. **Delete `setup.php`** from the server.
-7. Turn on the **free SSL certificate** in InfinityFree. The "Use my location" and "Near me" buttons only work on `https://`.
+GitHub Pages can only serve static files. It cannot run PHP or MySQL, so KaziHub will never work there. Use GitHub to store the code and a PHP host such as InfinityFree to run the site. You can switch Pages off under **Settings → Pages**.
+
+## Install on InfinityFree with automatic deploys (recommended)
+
+Once this is set up, every push to `main` uploads the site to InfinityFree automatically, through GitHub Actions (`.github/workflows/deploy.yml`).
+
+1. **Create the hosting account and database.** In InfinityFree, create an account (for example `kazihub.great-site.net`), then open **MySQL Databases** and create a database. Note:
+   - the **FTP details** (Account → FTP Details): hostname `ftpupload.net`, username `if0_…`, password
+   - the **MySQL details**: host `sql…infinityfree.com`, database name, username, password
+2. **Add the details to GitHub as secrets.** In the repo, open **Settings → Secrets and variables → Actions → New repository secret** and add:
+
+   | Secret | Example |
+   |---|---|
+   | `FTP_SERVER` | `ftpupload.net` |
+   | `FTP_USERNAME` | `if0_12345678` |
+   | `FTP_PASSWORD` | your InfinityFree account password |
+   | `DB_HOST` | `sql123.infinityfree.com` |
+   | `DB_NAME` | `if0_12345678_kazihub` |
+   | `DB_USER` | `if0_12345678` |
+   | `DB_PASS` | your database password |
+
+   Passwords stay in GitHub's encrypted secrets. They are written to `config/config.local.php` on the server only, never into the public code.
+3. **Deploy.** Go to **Actions → Deploy to hosting → Run workflow**, or just push a change. The first upload takes a few minutes.
+4. **Create the tables and the admin account.** Open `https://your-site/setup.php`, click **Create tables** (tick the box for demo data if you want it), then create your admin account. After that, `setup.php` locks itself.
+5. **Turn on the free SSL certificate** in InfinityFree. The "Use my location" and "Near me" buttons only work on `https://`.
+
+## Install by hand (FileZilla / File Manager)
+
+1. Create the database as in step 1 above.
+2. Upload everything into `htdocs`.
+3. Copy `config/config.local.example.php` to `config/config.local.php` and fill in your database details.
+4. Open `setup.php` as in step 4 above.
 
 ### Demo accounts (only if you loaded demo data)
 
@@ -67,7 +84,7 @@ DELETE FROM users WHERE id BETWEEN 1001 AND 1999;
 
 ### Run locally (XAMPP / Laragon)
 
-Copy the folder into `htdocs`, create a `kazihub` database in phpMyAdmin, keep `DB_HOST = localhost`, `DB_USER = root` and an empty password, then open `http://localhost/kazihub/setup.php`.
+Copy the folder into `htdocs` and create a `kazihub` database in phpMyAdmin. The default settings (`localhost`, `root`, no password) already match XAMPP. Then open `http://localhost/kazihub/setup.php`.
 
 ---
 
@@ -97,7 +114,9 @@ kazihub/
 ├── setup.php            One-time installer (delete after use)
 ├── admin/               Admin panel (overview, jobs, users, reports, inbox)
 ├── includes/            init, database, helpers, layout, shared HTML
-├── config/config.php    Your settings
+├── config/config.php    App settings (no passwords)
+├── config/config.local.php  Database passwords (created on the server, not in git)
+├── .github/workflows/   Automatic deploy to InfinityFree
 ├── database/            schema.sql, demo_data.sql
 ├── assets/              css, js, favicon
 └── uploads/             Profile photos and service images

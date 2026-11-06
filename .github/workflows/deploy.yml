@@ -1,0 +1,62 @@
+# Uploads KaziHub to InfinityFree (or any FTP host) every time you push to main.
+# Set these in GitHub: Settings -> Secrets and variables -> Actions -> New repository secret
+#   FTP_SERVER    e.g. ftpupload.net
+#   FTP_USERNAME  e.g. if0_12345678
+#   FTP_PASSWORD  your InfinityFree account (vPanel) password
+#   DB_HOST       e.g. sql123.infinityfree.com
+#   DB_NAME       e.g. if0_12345678_kazihub
+#   DB_USER       e.g. if0_12345678
+#   DB_PASS       your database password
+# Optional: FTP_DIR (default /htdocs/)
+name: Deploy to hosting
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      HAS_FTP: ${{ secrets.FTP_SERVER != '' && secrets.FTP_USERNAME != '' && secrets.FTP_PASSWORD != '' }}
+    steps:
+      - name: Check secrets
+        if: env.HAS_FTP != 'true'
+        run: echo "::warning::FTP secrets are not set yet, so nothing was deployed. See .github/workflows/deploy.yml for the list."
+
+      - uses: actions/checkout@v4
+        if: env.HAS_FTP == 'true'
+
+      - name: Check PHP syntax
+        if: env.HAS_FTP == 'true'
+        run: find . -name '*.php' -not -path './.git/*' -print0 | xargs -0 -n1 php -l > /dev/null
+
+      - name: Write database settings (kept out of git)
+        if: env.HAS_FTP == 'true'
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASS: ${{ secrets.DB_PASS }}
+        run: |
+          php -r '$c = ["DB_HOST" => getenv("DB_HOST"), "DB_NAME" => getenv("DB_NAME"), "DB_USER" => getenv("DB_USER"), "DB_PASS" => getenv("DB_PASS")];
+                  file_put_contents("config/config.local.php", "<?php\nreturn " . var_export($c, true) . ";\n");'
+
+      - name: Upload via FTP
+        if: env.HAS_FTP == 'true'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_DIR || '/htdocs/' }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            README.md
