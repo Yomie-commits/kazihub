@@ -107,4 +107,4 @@ delete from auth.users where id::text like '00000000-0000-4000-8000-%';
 
 ## Older version
 
-The earlier PHP/MySQL version (for hosts like InfinityFree) is saved under the git tag [`php-version`](../../tree/php-version).
+The earlier PHP/MySQL version (for hosts like InfinityFree) is saved in the [`php-version`](../../tree/php-version) branch.
