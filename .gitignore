@@ -1,4 +1,2 @@
-uploads/*/*
-!uploads/*/.gitkeep
 .DS_Store
-config/config.local.php
+node_modules/

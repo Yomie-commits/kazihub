@@ -127,3 +127,6 @@ h1, h2, h3, h4, h5, h6 { color: var(--ink); letter-spacing: -.01em; }
 .admin-nav .nav-link { color: #3b4440; border-radius: .5rem; }
 .admin-nav .nav-link.active { background: var(--brand-soft); color: var(--brand-dark); font-weight: 600; }
 .min-w-0 { min-width: 0; }
+
+.pre-line { white-space: pre-line; }
+#map { height: 360px; }
